@@ -8,7 +8,6 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 .idea/
-data/
 dll/
 
 # Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
