@@ -76,7 +76,7 @@ public class Dictionary {
         return results;
     }
 
-    public boolean isValidInsuranceWord(String word) {
+    public boolean isInsuranceWord(String word) {
         return insuranceSet.contains(word);
     }
 }

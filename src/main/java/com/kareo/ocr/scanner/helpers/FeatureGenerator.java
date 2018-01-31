@@ -9,7 +9,7 @@ import java.util.List;
 
 public class FeatureGenerator {
 
-    public static final int ROW_LENGTH = 12;
+    public static final int ROW_LENGTH = 13;
     public static final String[] FEATURES_HEADER = {
             "ImageName", "Word", "Category", "WordBefore", "WordAfter", "WordPosition", "WordLength", "CharCount", "NumCount", "PunctCount", "LineNumber", "ContainsRealWord", "IsInsuranceWord"
     };
@@ -18,7 +18,7 @@ public class FeatureGenerator {
     /*Features:
         -0 Image Name
         -1 Word
-        -2 Category (null, classification word, important class)
+        -2 Category (none, classification word, important class)
         -3 Word Before
         -4 Word After
         -5 Word Position in Line
@@ -32,35 +32,32 @@ public class FeatureGenerator {
     */
     public List<String[]> generateFeatures(String ocrResults, String filename) {
 
-        List<String[]> test = new ArrayList<String[]>();
+        ocrResults = ocrResults.toLowerCase();
+        List<String[]> featureSet = new ArrayList<String[]>();
         String[] lines = ocrResults.split("\n");
-        for (String line : lines) {
+        for(int l = 0; l < lines.length; l++) {
 
-            String[] lineArray = line.split("\\s+");
+            String[] lineArray = lines[l].split("\\s+");
             for(int w = 0; w < lineArray.length; w++) {
-                String[] row = new String[12];
+                String[] row = new String[ROW_LENGTH];
                 row[0] = filename == null ? " " : filename;
                 row[1] = lineArray[w];
-                row[2] = " ";
-                row[3] = w ==0 ? " " : lineArray[w-1] ;
-                row[4] = w == lineArray.length-1 ? " " : lineArray[w+1];
+                row[2] = "none";
+                row[3] = w == 0 ? " " : lineArray[w - 1];
+                row[4] = w == lineArray.length - 1 ? " " : lineArray[w + 1];
                 row[5] = String.valueOf(w);
                 row[6] = String.valueOf(lineArray[w].length());
                 row[7] = String.valueOf(lineArray[w].replaceAll("[^a-z]", "").length());
-                row[8] = ;
-                row[9] = ;
-                row[10] = ;
-                row[11] = ;
-                row[12] = ;
-                row[13] = ;
-
-
+                row[8] = String.valueOf(lineArray[w].replaceAll("[^0-9]", "").length());
+                row[9] = String.valueOf(lineArray[w].replaceAll("[^0-9a-z]", "").length());
+                row[10] = String.valueOf(l);
+                row[11] = String.valueOf(dictionary.isValidWord(lineArray[w]));
+                row[12] = String.valueOf(dictionary.isInsuranceWord(lineArray[w]));
+                featureSet.add(row);
             }
 
         }
-        lines[0] = "string";
-        test.add(lines);
-        return test;
+        return featureSet;
 
     }
 
@@ -75,9 +72,12 @@ public class FeatureGenerator {
             //Size sz = new opencv_core.Size(500,500);
             //resize(img, resizeimage, sz );
             String words = tesseract.doOCR(OCRHelper.matToBuf(img));
-            List<String[]> strList = featureGenerator.generateFeatures(words);
+            System.out.println(words);
+
+            List<String[]> strList = featureGenerator.generateFeatures(words,"unitedhealthcare");
             //OCRHelper.display(resizeimage, "string");
-            System.out.println(Arrays.toString(strList.get(0)));
+            for(String[] l : strList)
+            System.out.println(Arrays.toString(l));
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,6 +1,6 @@
 package com.kareo.ocr.scanner.training;
 import com.kareo.ocr.scanner.helpers.OCRHelper;
-import com.kareo.ocr.scanner.training.minimizer.FilterParams;
+import com.kareo.ocr.scanner.training.minimizer.FilterModel;
 import com.kareo.ocr.scanner.training.minimizer.OCRFunction;
 import org.bytedeco.javacpp.opencv_core.Mat;
 
@@ -48,7 +48,6 @@ public class GradientDescent {
                     step = learningRate * initial[i];
                     addStep(initial, i, step);
                     loss_2 = function.valueAt(initial);
-                    OCRHelper.saveImage(function.getMat(),"Variable: " + i + "Batch: " + b);
                     if(loss_2>loss_1) {
                         addStep(initial, i, -step);
                         learningRate = learningRate * -.5;
@@ -62,7 +61,8 @@ public class GradientDescent {
                             learningRate = learningRate * 1.5;
                     }
                     System.out.println("LOSS: " + loss_1 + " BATCH: " + b + " Interation: " + i + " LearningRate: " + learningRate);
-                    System.out.println(Arrays.toString(initial));
+                    System.out.println("Parameters: " + Arrays.toString(initial));
+                    OCRHelper.saveImages(function.getMats(),"BATCH: " + b + " Interation: " + i);
                 }
             }
 
@@ -87,11 +87,15 @@ public class GradientDescent {
 
     public static void main (String args[]){
 
-        Mat mat = imread("data/unitedhealthcare-1.jpeg");
-        OCRFunction function = new OCRFunction(mat);
+        Mat[] mats = new Mat[3];
+        mats[0] = imread("data/unitedhealthcare-1.jpeg");
+        mats[1] = imread("data/Sunshine.jpeg");
+        mats[2] = imread("data/bcbs.jpeg");
+
+        OCRFunction function = new OCRFunction(mats);
         //TestFunction function = new TestFunction();
         double[] init = {0,255};
-        GradientDescent gradientDescent = new GradientDescent(FilterParams.ranges);
+        GradientDescent gradientDescent = new GradientDescent(FilterModel.ranges);
         double loss =gradientDescent.minimize(function, init, 0.1);
         System.out.println("Final Loss" + loss);
 

@@ -17,9 +17,11 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import static org.bytedeco.javacpp.opencv_imgcodecs.cvSaveImage;
 import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
+import static org.bytedeco.javacpp.opencv_imgcodecs.imwrite;
 
 /**
  * Created by christian.gao on 1/29/18.
@@ -73,6 +75,23 @@ public class OCRHelper {
         cvSaveImage("data/testImages/" + source_name + ".jpg", image);
     }
 
+    public static Mat[] cloneMats(Mat[] mats){
+        Mat[] newMat = new Mat[mats.length];
+        for(int i = 0; i < mats.length; i ++)
+            newMat[i] = mats[i].clone();
+
+        return newMat;
+    }
+
+    public static void saveImages(Mat[] mats, String source_name){
+
+        for(int i = 0; i < mats.length; i ++) {
+            File f = new File("data/testImages/" + source_name +"-" + i + ".jpg");
+            imwrite(f.getAbsolutePath(), mats[i]);
+        }
+
+    }
+
     public static void display(Object image, String caption) {
 
         CanvasFrame canvas = new CanvasFrame(caption, 1.0);
@@ -90,4 +109,6 @@ public class OCRHelper {
             throw new RuntimeException("Bad Image!");
 
     }
+
+
 }
