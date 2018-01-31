@@ -155,7 +155,7 @@ public class Deskew {
             final int[] aux = x1;
             x1 = x2;
             x2 = aux;
-            // Increase the step:
+            // Increase the addStep:
             step *= 2;
             if (step >= w2) {
                 break;

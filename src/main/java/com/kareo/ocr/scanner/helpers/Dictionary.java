@@ -8,6 +8,11 @@ import java.util.*;
 public class Dictionary {
     private Set<String> wordsSet;
 
+    public class WordResults{
+        public List<String> valid_words = new ArrayList<String>();
+        public List<String> invalid_words = new ArrayList<String>();
+    }
+
     public Dictionary() {
         wordsSet = new HashSet<String>();
         try {
@@ -29,18 +34,18 @@ public class Dictionary {
 
         Dictionary dict = new Dictionary();
 
-        System.out.println(dict.validWord("medical"));
-        System.out.println(dict.validWord("chicken??"));
-        System.out.println(dict.validWord("rx "));
-        System.out.println(dict.validWord("hsa"));
-        System.out.println(dict.validWord("pharm!@#!acy"));
+        System.out.println(dict.getDictionaryResults("medical"));
+        System.out.println(dict.getDictionaryResults("chicken??"));
+        System.out.println(dict.getDictionaryResults("rx "));
+        System.out.println(dict.getDictionaryResults("hsa"));
+        System.out.println(dict.getDictionaryResults("pharm!@#!acy"));
 
         String tst_str = "medical life   ----cat--- ???!@## wtf hi insurance";
         System.out.println("valid words: " + dict.validWords(tst_str));
 
     }
 
-    public boolean validWord(String word) {
+    public boolean getDictionaryResults(String word) {
         if (word.length() == 1)
             return false;
         else
@@ -49,16 +54,20 @@ public class Dictionary {
         return wordsSet.contains(word);
     }
 
-    public List<String> validWords(String words_str) {
-
+    public WordResults validWords(String words_str) {
+        WordResults results = new WordResults();
         List<String> valid_words = new ArrayList<String>();
         String[] words = words_str.toLowerCase().trim().replaceAll(" +", " ").split(" ");
 
+
         for (String word : words) {
-            if (validWord(word))
-                valid_words.add(word);
+            if (getDictionaryResults(word))
+                results.valid_words.add(word);
+            else
+                results.invalid_words.add(word);
+
         }
 
-        return valid_words;
+        return results;
     }
 }

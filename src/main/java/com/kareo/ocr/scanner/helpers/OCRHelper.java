@@ -10,6 +10,7 @@ import org.bytedeco.javacv.Java2DFrameConverter;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.bytedeco.javacv.OpenCVFrameConverter.ToIplImage;
 import org.bytedeco.javacv.OpenCVFrameConverter.ToMat;
+import org.omg.SendingContext.RunTime;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -55,9 +56,9 @@ public class OCRHelper {
 
     }
 
-    public static void saveImage(String source_file, Mat mat){
+    public static void saveImage(Mat mat,String source_name){
         IplImage image = MatToIpl(mat);
-        cvSaveImage(source_file, image);
+        cvSaveImage("data/testImages/" + source_name + ".jpg", image);
     }
 
     public static void display(Object image, String caption) {
@@ -73,6 +74,8 @@ public class OCRHelper {
             canvas.showImage(converter.convert(image));
         else if (image instanceof BufferedImage)
             canvas.showImage((BufferedImage) image);
+        else
+            throw new RuntimeException("Bad Image!");
 
     }
 }

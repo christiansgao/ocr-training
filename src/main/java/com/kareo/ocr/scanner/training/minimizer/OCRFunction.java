@@ -32,18 +32,18 @@ public class OCRFunction {
 
     public double valueAt(double[] params) {
 
-        Mat mat = defaultMat.clone();
+        this.mat = defaultMat.clone();
         FilterParams filterParams = new FilterParams();
         filterParams.thresh_lower = (int) params[0];
         filterParams.thresh_higher = (int) params[1];
-        runFilters(mat, filterParams);
+        runFilters(filterParams);
         double loss = getLoss();
 
         return loss;
 
     }
 
-    public void runFilters(Mat mat, FilterParams params) {
+    public Mat runFilters(FilterParams params) {
 
         //normalize(mat, mat, 0, 1., NORM_MINMAX, -1, null);
         cvtColor(mat, mat, CV_BGR2GRAY);
@@ -54,18 +54,21 @@ public class OCRFunction {
         //dilate(mat, mat, new Mat());
         //GaussianBlur(mat, mat, mat.size(), 1, 1, 1);
         //Laplacian(mat, mat, mat.depth(), 1, 3, 0, BORDER_DEFAULT);
-
-        this.mat =  mat;
+        return mat;
     }
 
     public double getLoss() {
 
         try {
-            double loss;
+            double loss = 0;
             String result = instance.doOCR(OCRHelper.matToBuf(this.mat));
-            System.out.println("Found words: " + result);
-            List<String> valid_word = dict.validWords(result);
-            return valid_word.size();
+            //System.out.println("Read Document: " + result);
+            Dictionary.WordResults wordResults = dict.validWords(result);
+            loss -= wordResults.valid_words.size();
+            loss -= (double) wordResults.invalid_words.size()/ 1000.0;
+
+
+            return loss;
 
         } catch (TesseractException e) {
             System.err.println(e.getMessage());
@@ -79,6 +82,29 @@ public class OCRFunction {
 
     public Mat getDefaultMat() {
         return defaultMat;
+    }
+
+    public static void main(String[] args) {
+
+        // Read an image.
+        Mat mat = imread("data/unitedhealthcare-1.jpeg");
+        //display(mat, "Input");
+
+        //filter mat
+        OCRFunction function = new OCRFunction(mat);
+        Mat filtered_mat = function.runFilters(new FilterParams());
+        OCRHelper.display(filtered_mat, "After");
+
+
+
+        //print string results
+        double loss = function.getLoss();
+        System.out.println("OCR Loss: " + loss);
+
+
+        //String fileName = "/Users/chris.kim/sandbox/ocr-app/images/card-grayscale.jpg";
+        //File f = new File(fileName);
+        //imwrite(f.getAbsolutePath(), filtered_mat);
     }
 
 
