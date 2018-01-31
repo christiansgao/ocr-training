@@ -14,11 +14,22 @@ import static org.bytedeco.javacpp.opencv_imgproc.*;
 public class FilterTraining {
 
     Mat mat;
-    Tesseract instance = Tesseract.getInstance(); // JNA Interface Mapping
+    Mat defaultMat;
+    Tesseract instance = Tesseract.getInstance();
 
+    public Mat getMat() {
+        return mat;
+    }
 
-    public FilterTraining(Mat mat) {
-        this.mat = mat;
+    public Mat getDefaultMat() {
+        return defaultMat;
+    }
+
+    // JNA Interface Mapping
+    public FilterTraining(Mat mat){
+        defaultMat = mat;
+        mat = mat;
+
     }
 
     public double getLoss() {
@@ -28,8 +39,6 @@ public class FilterTraining {
             System.out.println("Found words: " + result);
 
             String result_clean = result.replaceAll("\n"," ").trim().replaceAll(" +", " ");
-
-
         } catch (TesseractException e) {
             System.err.println(e.getMessage());
         }

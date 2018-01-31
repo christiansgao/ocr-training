@@ -1,87 +1,68 @@
 package com.kareo.ocr.scanner.training;
 import com.github.lbfgs4j.LbfgsMinimizer;
+import com.kareo.ocr.scanner.helpers.OCRHelper;
+import com.kareo.ocr.scanner.training.minimizer.OCRFunction;
 import edu.stanford.nlp.optimization.*;
 import edu.stanford.nlp.util.logging.Redwood;
+import org.bytedeco.javacpp.opencv_core.Mat;
 
 import java.util.List;
+
+import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
 
 public class GradientDescent {
 
     int MAX_ITERATIONS = 5000;
     double TOLERANCE = .1;
+    int TERMINATE_ITERATIONS = 10;
     double INIT_GAIN = .01;
 
-    public class Funct extends AbstractStochasticCachingDiffFunction{
-        public void calculate(double[] x) {
+    public double minimize(OCRFunction function, double[] initial, double learningRate){
+
+        int params_length = initial.length;
+        double step = 0;
+        double loss_2 = 0;
+        double loss_1 = 0;
+        int terminate = 0;
+
+
+        for (int i = 0; i < initial.length; i++) {
+            double l = learningRate;
+            for (int b = 0; b < MAX_ITERATIONS; b++) {
+                loss_1 = function.valueAt(initial);
+                step = learningRate * initial[i];
+                initial[i] += step;
+                loss_2 = function.valueAt(initial);
+                OCRHelper.display(function.getMat(),"Iteration: " + b + "Variable: " + i);
+                if(loss_2>loss_1) {
+                    initial[i] -= step;
+                    learningRate = learningRate * -.5;
+                } else if(loss_2 == loss_1){
+                    if(terminate == TERMINATE_ITERATIONS)
+                        break;
+                    terminate += 1;
+                    learningRate = learningRate * 1.5;
+                }
+                System.out.println("Loss" + loss_1);
+            }
         }
 
-        public double valueAt(double[] x) {
-            if(x[0]>1)
-                x[0]--;
-            if(x[1]>1)
-                x[1]--;
-            return x[1] + x[0];
-        }
-
-        public int domainDimension(){
-            return 1;
-        }
-        public int dataDimension(){
-            return 1;
-        }
-        public void calculateStochastic(double[] d1, double[] d2, int[] i){
-
-        }
+        return loss_2;
     }
-
-    public Function getTestFunction(){
-
-        Function function = new AbstractStochasticCachingDiffFunction() {
-
-            public void calculate(double[] x) {
-                if(x[0]>1)
-                    x[0]--;
-                if(x[1]>1)
-                    x[1]--;
-            }
-
-            public double valueAt(double[] x) {
-                if(x[0]>1)
-                    x[0]--;
-                if(x[1]>1)
-                    x[1]--;
-                return x[1] + x[0];
-            }
-
-            public int domainDimension(){
-                return 1;
-            }
-            public int dataDimension(){
-                return 1;
-            }
-            public void calculateStochastic(double[] d1, double[] d2, int[] i){
-
-            }
-
-        };
-        return function;
-    }
-
 
     public void minimizeTest(){
-        SMDMinimizer qn = new SMDMinimizer<Function>(INIT_GAIN,1,StochasticCalculateMethods.GradientOnly,MAX_ITERATIONS) ;
         double[] testSeed = {1000};
-        Function testFunction = getTestFunction();
-        //qn.setM(10);
-        double[] min = qn.minimize(testFunction,TOLERANCE,testSeed);
-        for(double value : min) {
-            System.out.println(value);
-        }
+
     }
 
     public static void main (String args[]){
+
+        Mat mat = imread("data/unitedhealthcare-1.jpeg");
+        OCRFunction function = new OCRFunction(mat);
+        double[] init = {0,255};
         GradientDescent gradientDescent = new GradientDescent();
-        gradientDescent.minimizeTest();
+        double loss =gradientDescent.minimize(function, init, 0.1);
+        System.out.println("Final Loss" + loss);
 
     }
 }

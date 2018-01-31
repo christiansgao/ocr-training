@@ -17,6 +17,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import static org.bytedeco.javacpp.opencv_imgcodecs.cvSaveImage;
 
 /**
  * Created by christian.gao on 1/29/18.
@@ -52,6 +53,11 @@ public class OCRHelper {
         Frame frame = toIplConverter.convert(image);
         return toIplConverter.convertToIplImage(frame);
 
+    }
+
+    public static void saveImage(String source_file, Mat mat){
+        IplImage image = MatToIpl(mat);
+        cvSaveImage(source_file, image);
     }
 
     public static void display(Object image, String caption) {

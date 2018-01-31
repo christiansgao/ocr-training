@@ -35,7 +35,7 @@ public class Dictionary {
         System.out.println(dict.validWord("hsa"));
         System.out.println(dict.validWord("pharm!@#!acy"));
 
-        String tst_str = "medical life ----cat--- ???!@## wtf hi insurance";
+        String tst_str = "medical life   ----cat--- ???!@## wtf hi insurance";
         System.out.println("valid words: " + dict.validWords(tst_str));
 
     }
@@ -44,7 +44,7 @@ public class Dictionary {
         if (word.length() == 1)
             return false;
         else
-            word = word.toLowerCase().replaceAll(" ", "");//.replaceAll("[^a-z]", "");
+            word = word; //.replaceAll("[^a-z]", "");
 
         return wordsSet.contains(word);
     }
@@ -52,7 +52,7 @@ public class Dictionary {
     public List<String> validWords(String words_str) {
 
         List<String> valid_words = new ArrayList<String>();
-        String[] words = words_str.split(" ");
+        String[] words = words_str.toLowerCase().trim().replaceAll(" +", " ").split(" ");
 
         for (String word : words) {
             if (validWord(word))
