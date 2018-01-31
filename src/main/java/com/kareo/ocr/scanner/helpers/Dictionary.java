@@ -7,6 +7,7 @@ import java.util.*;
 
 public class Dictionary {
     private Set<String> wordsSet;
+    private Set<String> insuranceSet;
 
     public class WordResults{
         public List<String> valid_words = new ArrayList<String>();
@@ -15,6 +16,8 @@ public class Dictionary {
 
     public Dictionary() {
         wordsSet = new HashSet<String>();
+        insuranceSet = new HashSet<String>();
+
         try {
             String[] wordList = {"medicalwords.txt", "allwords.txt", "mywords.txt"};
             for (String word : wordList) {
@@ -24,7 +27,11 @@ public class Dictionary {
                 wordListContents = wordListContents.replaceAll("\r", "");
                 String[] words = wordListContents.split("\n");
                 Collections.addAll(wordsSet, words);
+                if(word.equals("mywords.txt")){
+                    Collections.addAll(insuranceSet, words);
+                }
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -34,18 +41,18 @@ public class Dictionary {
 
         Dictionary dict = new Dictionary();
 
-        System.out.println(dict.getDictionaryResults("medical"));
-        System.out.println(dict.getDictionaryResults("chicken??"));
-        System.out.println(dict.getDictionaryResults("rx "));
-        System.out.println(dict.getDictionaryResults("hsa"));
-        System.out.println(dict.getDictionaryResults("pharm!@#!acy"));
+        System.out.println(dict.isValidWord("medical"));
+        System.out.println(dict.isValidWord("chicken??"));
+        System.out.println(dict.isValidWord("rx "));
+        System.out.println(dict.isValidWord("hsa"));
+        System.out.println(dict.isValidWord("pharm!@#!acy"));
 
         String tst_str = "medical life   ----cat--- ???!@## wtf hi insurance";
         System.out.println("valid words: " + dict.validWords(tst_str));
 
     }
 
-    public boolean getDictionaryResults(String word) {
+    public boolean isValidWord(String word) {
         if (word.length() == 1)
             return false;
         else
@@ -59,15 +66,17 @@ public class Dictionary {
         List<String> valid_words = new ArrayList<String>();
         String[] words = words_str.toLowerCase().trim().replaceAll(" +", " ").split(" ");
 
-
         for (String word : words) {
-            if (getDictionaryResults(word))
+            if (isValidWord(word))
                 results.valid_words.add(word);
             else
                 results.invalid_words.add(word);
 
         }
-
         return results;
+    }
+
+    public boolean isValidInsuranceWord(String word) {
+        return insuranceSet.contains(word);
     }
 }
