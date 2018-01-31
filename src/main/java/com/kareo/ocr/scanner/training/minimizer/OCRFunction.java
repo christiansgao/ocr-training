@@ -2,6 +2,7 @@ package com.kareo.ocr.scanner.training.minimizer;
 
 import com.kareo.ocr.scanner.helpers.Dictionary;
 import com.kareo.ocr.scanner.helpers.OCRHelper;
+import com.kareo.ocr.scanner.training.minimizer.types.Function;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import org.bytedeco.javacpp.opencv_core.Mat;
@@ -12,7 +13,7 @@ import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
 import static org.bytedeco.javacpp.opencv_imgproc.*;
 
 
-public class OCRFunction {
+public class OCRFunction implements Function {
 
     Dictionary dict = new Dictionary();
     Tesseract instance = Tesseract.getInstance(); // JNA Interface Mapping

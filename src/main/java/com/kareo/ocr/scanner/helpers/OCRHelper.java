@@ -82,7 +82,6 @@ public class OCRHelper {
 
         return newMat;
     }
-
     public static void saveImages(Mat[] mats, String source_name){
 
         for(int i = 0; i < mats.length; i ++) {

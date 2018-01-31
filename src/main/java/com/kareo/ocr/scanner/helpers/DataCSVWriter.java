@@ -6,6 +6,7 @@ import java.io.File;
 import java.nio.file.StandardOpenOption;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 import java.io.Writer;
@@ -13,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class DataCSVWriter {
 
@@ -20,6 +22,12 @@ public class DataCSVWriter {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
         Date date = new Date();
         return dateFormat.format(date);
+    }
+
+    public static void appendToFile(double[] fields, String path) {
+
+        String[] strArray = Arrays.stream(fields).mapToObj(String::valueOf).toArray(String[]::new);
+        appendToFile(strArray, path);
     }
 
     public static void appendToFile(String[] fields, String path){

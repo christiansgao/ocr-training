@@ -1,7 +1,11 @@
 package com.kareo.ocr.scanner.training;
+import com.kareo.ocr.scanner.helpers.DataCSVWriter;
 import com.kareo.ocr.scanner.helpers.OCRHelper;
 import com.kareo.ocr.scanner.training.minimizer.FilterModel;
 import com.kareo.ocr.scanner.training.minimizer.OCRFunction;
+import com.kareo.ocr.scanner.training.minimizer.TestFunction;
+import com.kareo.ocr.scanner.training.minimizer.types.Function;
+import com.opencsv.CSVWriter;
 import org.bytedeco.javacpp.opencv_core.Mat;
 
 import java.util.Arrays;
@@ -10,8 +14,8 @@ import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
 
 public class GradientDescent {
 
-    int BATCHSIZE = 50;
-    int MAX_EPOCH = 3;
+    int BATCHSIZE = 100;
+    int MAX_EPOCH = 4;
     int MAX_SAME_LOSS = 15;
 
     double TOLERANCE = .1;
@@ -20,7 +24,7 @@ public class GradientDescent {
         this.ranges = ranges;
     }
     //public double minimize(TestFunction function, double[] initial, double learningRate){
-    public double minimize(OCRFunction function, double[] initial, double learningRate){
+    public double minimize(Function function, double[] initial, double learningRate){
 
         int params_length = initial.length;
         double step = 0;
@@ -29,14 +33,10 @@ public class GradientDescent {
         double min_loss = 10000;
         int epochs = 0;
 
-        int test = initial.length;
-
         while(true){
 
             if(min_loss == loss_2 || epochs == MAX_EPOCH )
                 break;
-            else
-                min_loss = loss_2;
 
             epochs += 1;
 
@@ -48,27 +48,36 @@ public class GradientDescent {
                     step = learningRate * initial[i];
                     addStep(initial, i, step);
                     loss_2 = function.valueAt(initial);
-                    if(loss_2>loss_1) {
+                    if(loss_2 > loss_1) {
                         addStep(initial, i, -step);
                         learningRate = learningRate * -.5;
-                    } else if(loss_2 == loss_1){
+                    } else if(loss_1 < loss_2){
+                        addStep(initial, i, step);
+                        learningRate = learningRate * 1.5;
+                    }
+                    else if(loss_2 == loss_1){
                         if(sameLoss == MAX_SAME_LOSS)
                             break;
                         sameLoss += 1;
                         if(initial[i] == ranges[i][1] || initial[i] == ranges[i][0])
-                            learningRate = learningRate * -1;
+                            learningRate = learningRate * -1.2;
                         else
-                            learningRate = learningRate * 1.5;
+                            learningRate = learningRate * 1.5 * sameLoss;
                     }
-                    System.out.println("LOSS: " + loss_1 + " BATCH: " + b + " Interation: " + i + " LearningRate: " + learningRate);
+
+
+                    System.out.println("LOSS: " + loss_1 + " BATCH: " + b + " Paramenter: " + i + " LearningRate: " + learningRate + " Epoch: " + epochs + " SameLoss: " + sameLoss);
                     System.out.println("Parameters: " + Arrays.toString(initial));
+                    DataCSVWriter.appendToFile(initial, "data/trainingdata/parameters-1.csv");
                     OCRHelper.saveImages(function.getMats(),"BATCH: " + b + " Interation: " + i);
+                    if (min_loss > loss_2)
+                        min_loss = loss_2;
                 }
             }
 
         }
 
-        return loss_2;
+        return min_loss;
     }
 
     public void addStep(double[] initial, int i, double step){
@@ -94,10 +103,10 @@ public class GradientDescent {
 
         OCRFunction function = new OCRFunction(mats);
         //TestFunction function = new TestFunction();
-        double[] init = {0,255};
+        double[] init = {20,255};
         GradientDescent gradientDescent = new GradientDescent(FilterModel.ranges);
         double loss =gradientDescent.minimize(function, init, 0.1);
-        System.out.println("Final Loss" + loss);
+        System.out.println("Final Loss " + loss);
 
     }
 }
