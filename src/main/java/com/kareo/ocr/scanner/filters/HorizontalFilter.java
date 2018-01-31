@@ -60,7 +60,7 @@ public class HorizontalFilter {
         }
 
 
-        OCRHelper.IplToMat(src);
+        OCRHelper.iplToMat(src);
         OCRHelper.display(colorDst, "colorDst");
 
         //cvSaveImage(SOURCE_FILE, src);

@@ -66,7 +66,7 @@ public class OcrRunner {
         IplImage srcImage = OCRHelper.MatToIpl(mat);
         IplImage destImage = cvCreateImage(cvGetSize(srcImage), IPL_DEPTH_8U, 1);
         cvCvtColor(srcImage, destImage, CV_BGR2GRAY);
-        Mat grayImageMat = OCRHelper.IplToMat(destImage);
+        Mat grayImageMat = OCRHelper.iplToMat(destImage);
 //        display(grayImageMat, "Intermediate result");
         GaussianBlur(grayImageMat, grayImageMat, new Size(5, 5), 0.0, 0.0, BORDER_DEFAULT);
 
@@ -75,7 +75,7 @@ public class OcrRunner {
         cvErode(destImage, destImage);
         cvDilate(destImage, destImage);
 //        display(destImage, "Gray Scale Mat");
-        grayImageMat = OCRHelper.IplToMat(destImage);
+        grayImageMat = OCRHelper.iplToMat(destImage);
         return grayImageMat;
     }
 

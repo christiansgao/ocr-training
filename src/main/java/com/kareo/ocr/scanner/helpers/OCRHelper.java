@@ -19,6 +19,7 @@ import java.awt.image.DataBufferByte;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import static org.bytedeco.javacpp.opencv_imgcodecs.cvSaveImage;
+import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
 
 /**
  * Created by christian.gao on 1/29/18.
@@ -36,13 +37,13 @@ public class OCRHelper {
 
     }
 
-    public static Mat BufToMat(BufferedImage image) throws IOException {
+    public static Mat bufToMat(BufferedImage image) throws IOException {
         Frame frame = paintConverter.getFrame(image);
         return toMatConverter.convert(frame);
     }
 
 
-    public static Mat IplToMat(IplImage image) {
+    public static Mat iplToMat(IplImage image) {
 
         Frame frame = toMatConverter.convert(image);
         return toMatConverter.convertToMat(frame);
@@ -54,6 +55,17 @@ public class OCRHelper {
         Frame frame = toIplConverter.convert(image);
         return toIplConverter.convertToIplImage(frame);
 
+    }
+
+
+    public static Mat readImage(String source_name){
+        Mat mat = imread(source_name);
+        return mat;
+    }
+
+    public static BufferedImage readToBuffer(String source_name){
+        Mat mat = imread(source_name);
+        return matToBuf(mat);
     }
 
     public static void saveImage(Mat mat,String source_name){
