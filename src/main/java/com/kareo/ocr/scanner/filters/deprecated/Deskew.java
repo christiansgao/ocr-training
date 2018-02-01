@@ -1,5 +1,6 @@
 package com.kareo.ocr.scanner.filters.deprecated;
 
+import com.kareo.ocr.scanner.helpers.FileHelper;
 import com.kareo.ocr.scanner.helpers.OCRHelper;
 import org.apache.commons.imaging.Imaging;
 import org.bytedeco.javacpp.opencv_core.Mat;
@@ -196,7 +197,7 @@ public class Deskew {
 
         try {
             // Read an image.
-            Mat img =  OCRHelper.readImage("data/ReallyHardInsurance.jpeg");
+            Mat img =  FileHelper.readImage("data/ReallyHardInsurance.jpeg");
             //display(mat, "Input");
             //filter mat
             double skewness = findSkew(img)*57.2958;

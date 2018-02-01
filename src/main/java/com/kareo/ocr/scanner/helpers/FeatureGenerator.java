@@ -34,7 +34,7 @@ public class FeatureGenerator {
 
         ocrResults = ocrResults.toLowerCase();
         List<String[]> featureSet = new ArrayList<String[]>();
-        String[] lines = ocrResults.split("\n");
+        String[] lines = ocrResults.trim().replaceAll(" +", " ").replaceAll("\"", "").replaceAll(",", "").split("\n+");
         for(int l = 0; l < lines.length; l++) {
 
             String[] lineArray = lines[l].split("\\s+");
@@ -67,7 +67,7 @@ public class FeatureGenerator {
             // Read an image.
             Tesseract tesseract = new Tesseract();
             FeatureGenerator featureGenerator = new FeatureGenerator();
-            Mat img = OCRHelper.readImage("data/unitedhealthcare-1.jpeg");
+            Mat img = FileHelper.readImage("data/unitedhealthcare-1.jpeg");
             //Mat resizeimage = new Mat();
             //Size sz = new opencv_core.Size(500,500);
             //resize(img, resizeimage, sz );

@@ -1,5 +1,6 @@
 package com.kareo.ocr.scanner.filters;
 
+import com.kareo.ocr.scanner.helpers.FileHelper;
 import com.kareo.ocr.scanner.helpers.OCRHelper;
 import org.bytedeco.javacpp.opencv_core.Mat;
 
@@ -22,7 +23,7 @@ public class SkewFilter {
 
         try {
             // Read an image.
-            Mat img =  OCRHelper.readImage("data/ReallyHardInsurance.jpeg");
+            Mat img =  FileHelper.readImage("data/ReallyHardInsurance.jpeg");
             double skewness = findskew(img);
             Mat deskewed = skewFilter(img);
             System.out.println("skew: " + skewness);

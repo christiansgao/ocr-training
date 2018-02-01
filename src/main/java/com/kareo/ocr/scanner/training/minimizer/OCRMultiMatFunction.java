@@ -13,14 +13,14 @@ import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
 import static org.bytedeco.javacpp.opencv_imgproc.*;
 
 
-public class OCRFunction implements Function {
+public class OCRMultiMatFunction implements Function {
 
     Dictionary dict = new Dictionary();
     Tesseract instance = Tesseract.getInstance(); // JNA Interface Mapping
     Mat[] mats;
     Mat[] defaultMats;
 
-    public OCRFunction(Mat[] mats) {
+    public OCRMultiMatFunction(Mat[] mats) {
         this.mats = OCRHelper.cloneMats(mats);
         this.defaultMats = OCRHelper.cloneMats(mats);
     }
@@ -36,10 +36,10 @@ public class OCRFunction implements Function {
 
         //filter mat
 
-        OCRFunction function = new OCRFunction(mats);
+        OCRMultiMatFunction function = new OCRMultiMatFunction(mats);
         FilterModel model = new FilterModel();
-        model.setThresh_higher(250);
-        model.setThresh_lower(180);
+        model.setThresh_higher(250.0);
+        model.setThresh_lower(180.0);
 
         Mat[] filtered_mats = function.runFilters(model);
 

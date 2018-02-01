@@ -1,5 +1,6 @@
 package com.kareo.ocr.scanner.filters;
 
+import com.kareo.ocr.scanner.helpers.FileHelper;
 import com.kareo.ocr.scanner.helpers.OCRHelper;
 import org.bytedeco.javacpp.opencv_core.*;
 import static org.bytedeco.javacpp.opencv_core.*;
@@ -22,7 +23,7 @@ public class SpecFilter {
 
         try {
             // Read an image.
-            Mat img =  OCRHelper.readImage("data/unitedhealthcare-1.jpeg");
+            Mat img =  FileHelper.readImage("data/unitedhealthcare-1.jpeg");
             Mat deSpeckled = specFilter(img);
             OCRHelper.display(img, "Before");
 
